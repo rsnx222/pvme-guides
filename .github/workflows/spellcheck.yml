@@ -36,23 +36,27 @@ jobs:
             --relative \
             | tee spellcheck.txt || true
 
+          # Extract ONLY the flagged word (ignore fix suggestions)
           sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
             | tr '[:upper:]' '[:lower:]' \
             | sort -u > unique.txt || true
 
           if grep -q . spellcheck.txt; then
-            {
-              echo ""
-              echo "----"
-              echo "Unique flagged words:"
-              if [ -s unique.txt ]; then
-                cat unique.txt
-              else
-                echo "(none found)"
-              fi
-            } >> spellcheck.txt
-
             echo "found=true" >> $GITHUB_OUTPUT
+
+            echo ""
+            echo "=============================="
+            echo "Unique flagged words:"
+            echo "=============================="
+
+            if [ -s unique.txt ]; then
+              cat unique.txt | tee -a spellcheck.txt
+            else
+              echo "(none found)" | tee -a spellcheck.txt
+            fi
+
+            echo "=============================="
+
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
