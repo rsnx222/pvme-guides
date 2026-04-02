@@ -1,0 +1,24 @@
+name: Check Spelling (Branches)
+
+on:
+  push:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  spelling:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: check-spelling/check-spelling@main
+        with:
+          checkout: true
+          check_file_names: 1
+          only_check_changed_files: 1
+          spell_check_this: check-spelling/spell-check-this@main
+          use_magic_file: 1
