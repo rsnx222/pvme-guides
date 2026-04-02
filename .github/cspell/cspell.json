@@ -2,13 +2,11 @@
   "version": "0.2",
   "language": "en-GB",
 
-  "dictionaryDefinitions": [
-    { "name": "pvme-words", "path": ".github/cspell/allow.txt" }
-  ],
+  "dictionaryDefinitions": [{ "name": "pvme-words", "path": "./allow.txt" }],
 
   "dictionaries": ["pvme-words"],
 
-  "flagWords": [".github/cspell/reject.txt"],
+  "flagWords": ["./reject.txt"],
 
   "ignorePaths": [
     "node_modules/**",
