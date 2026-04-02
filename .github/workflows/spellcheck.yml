@@ -26,7 +26,7 @@ jobs:
             @cspell/dict-software-terms \
             @cspell/dict-gaming-terms
 
-      - name: Run spellcheck (capture output)
+      - name: Run spellcheck (capture output + summary)
         id: spell
         run: |
           cspell "**/*.txt" \
@@ -36,7 +36,17 @@ jobs:
             --relative \
             | tee spellcheck.txt || true
 
-          if grep -q . spellcheck.txt; then
+          # Extract words from "(word)" pattern robustly
+          grep -oE '\(([^)]+)\)' spellcheck.txt \
+            | tr -d '()' \
+            | tr '[:upper:]' '[:lower:]' \
+            | sort -u > unique.txt || true
+
+          if [ -s unique.txt ]; then
+            echo "" >> spellcheck.txt
+            echo "----" >> spellcheck.txt
+            echo "Unique flagged words:" >> spellcheck.txt
+            cat unique.txt >> spellcheck.txt
             echo "found=true" >> $GITHUB_OUTPUT
           else
             echo "found=false" >> $GITHUB_OUTPUT
