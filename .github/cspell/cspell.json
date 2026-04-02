@@ -37,8 +37,9 @@
     "**/*.mp3",
     "**/*.mp4",
 
-    "mental-health.txt",
-    "contributors.txt"
+    "**/mental-health.txt",
+    "**/contributors.txt",
+    "archive/**"
   ],
 
   "ignoreRegExpList": [
