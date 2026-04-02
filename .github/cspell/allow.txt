@@ -260,6 +260,7 @@ CoE
 coilspawn
 Coilspawns
 Colab
+color
 comboed
 COMMANDFILENAME
 COMMANDNAME
