@@ -21,7 +21,7 @@ jobs:
         id: spell
         run: |
           cspell "**/*.txt" \
-            --config .cspell/cspell.json \
+            --config .github/cspell/cspell.json \
             --no-progress \
             --no-summary > spellcheck.txt || true
 
