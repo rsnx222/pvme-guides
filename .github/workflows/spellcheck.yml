@@ -23,7 +23,7 @@ jobs:
           cspell "**/*.txt" \
             --config .github/cspell/cspell.json \
             --no-progress \
-            --no-summary > spellcheck.txt || true
+            --no-summary | tee spellcheck.txt || true
 
           if [ -s spellcheck.txt ]; then
             echo "found=true" >> $GITHUB_OUTPUT
