@@ -1,0 +1,43 @@
+{
+  "version": "0.2",
+  "language": "en-GB",
+
+  "dictionaryDefinitions": [{ "name": "pvme-words", "path": "./allow.txt" }],
+
+  "dictionaries": ["pvme-words"],
+
+  "flagWords": ["./reject.txt"],
+
+  "ignorePaths": [
+    "node_modules/**",
+    ".git/**",
+
+    ".github/**",
+    ".vscode/**",
+    "archive/**",
+    "ca-bingo-lists/**",
+
+    "**/*.png",
+    "**/*.jpg",
+    "**/*.jpeg",
+    "**/*.gif",
+    "**/*.webp",
+    "**/*.pdf",
+    "**/*.zip",
+    "**/*.mp3",
+    "**/*.mp4",
+
+    "mental-health.txt",
+    "contributors.txt"
+  ],
+
+  "ignoreRegExpList": [
+    "<:.*?:.*?>",
+    "\\`([^\\`].*?)\\`",
+    "https?:\\/\\/[^\\s]+",
+    "\\.tag:\\w*",
+    "\\!\\.\\w*",
+    "\\$.*\\$",
+    "```[\\s\\S]*?```"
+  ]
+}

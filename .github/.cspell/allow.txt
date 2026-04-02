@@ -1606,6 +1606,22 @@ zuk
 zukcape
 zukluring
 Zuriel
+ambassadorca
+aodca
+benefiting
+dependant
+dragonca
+Dreadhog
+Edimmus
+magisterca
+miniontank
+rasialca
+rasialguide
+seiryuca
+Silverquill
+voragoca
+vorkathca
+Zuriel
 
 # Alt1-specific
 exportbar
@@ -1625,3 +1641,4 @@ Kree'arra
 Oo'glog
 would've
 Ma'at
+K'ril
