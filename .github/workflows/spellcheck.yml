@@ -36,22 +36,21 @@ jobs:
             --relative \
             | tee spellcheck.txt || true
 
-          # Extract words safely
-          grep -oE '\([^)]*\)' spellcheck.txt \
-            | tr -d '()' \
+          sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
             | tr '[:upper:]' '[:lower:]' \
             | sort -u > unique.txt || true
 
           if grep -q . spellcheck.txt; then
-            echo "" >> spellcheck.txt
-            echo "----" >> spellcheck.txt
-            echo "Unique flagged words:" >> spellcheck.txt
-
-            if [ -s unique.txt ]; then
-              cat unique.txt >> spellcheck.txt
-            else
-              echo "(none found)" >> spellcheck.txt
-            fi
+            {
+              echo ""
+              echo "----"
+              echo "Unique flagged words:"
+              if [ -s unique.txt ]; then
+                cat unique.txt
+              else
+                echo "(none found)"
+              fi
+            } >> spellcheck.txt
 
             echo "found=true" >> $GITHUB_OUTPUT
           else
