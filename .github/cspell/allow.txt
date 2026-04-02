@@ -10,6 +10,7 @@ absorbative
 abyssalscourge
 accountsecurity
 Achto
+accel
 actionbar
 Adde
 admins

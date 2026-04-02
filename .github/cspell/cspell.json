@@ -2,9 +2,19 @@
   "version": "0.2",
   "language": "en-GB",
 
-  "dictionaryDefinitions": [{ "name": "pvme-words", "path": "./allow.txt" }],
+  "import": [
+    "@cspell/dict-software-terms/cspell-ext.json",
+    "@cspell/dict-gaming-terms/cspell-ext.json"
+  ],
 
-  "dictionaries": ["pvme-words"],
+  "dictionaryDefinitions": [
+    {
+      "name": "pvme-words",
+      "path": "./allow.txt"
+    }
+  ],
+
+  "dictionaries": ["pvme-words", "en-gb"],
 
   "flagWords": ["./reject.txt"],
 

@@ -14,8 +14,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install cspell
-        run: npm install -g cspell
+      - name: Setup Node (with cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install cspell + dictionaries
+        run: |
+          npm install -g \
+            cspell@latest \
+            @cspell/dict-software-terms \
+            @cspell/dict-gaming-terms
 
       - name: Run spellcheck (capture output)
         id: spell
@@ -23,9 +33,11 @@ jobs:
           cspell "**/*.txt" \
             --config .github/cspell/cspell.json \
             --no-progress \
-            --no-summary | tee spellcheck.txt || true
+            --no-summary \
+            --relative \
+            | tee spellcheck.txt || true
 
-          if [ -s spellcheck.txt ]; then
+          if grep -q . spellcheck.txt; then
             echo "found=true" >> $GITHUB_OUTPUT
           else
             echo "found=false" >> $GITHUB_OUTPUT
