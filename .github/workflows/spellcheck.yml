@@ -1,0 +1,60 @@
+name: Spellcheck
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+jobs:
+  spellcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install cspell + dictionaries
+        run: |
+          npm install -g \
+            cspell@latest \
+            @cspell/dict-software-terms \
+            @cspell/dict-gaming-terms
+
+      - name: Run spellcheck
+        id: spell
+        run: |
+          REPORT=/tmp/spellcheck.txt
+
+          git ls-files '*.txt' \
+            | cspell \
+                --config .github/cspell/cspell.json \
+                --file-list stdin \
+                --no-progress \
+                --no-summary \
+                --relative \
+                | tee "$REPORT" || true
+
+          if grep -q "Unknown word" "$REPORT"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            cp "$REPORT" spellcheck.txt
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.spell.outputs.found == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: spellcheck.txt
+          edit-mode: replace
+
+      - name: Fail if issues found
+        if: steps.spell.outputs.found == 'true'
+        run: exit 1
