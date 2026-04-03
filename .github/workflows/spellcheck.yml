@@ -29,19 +29,16 @@ jobs:
       - name: Run spellcheck (capture output + summary)
         id: spell
         run: |
-          # Run cspell (config controls scope)
-          cspell \
+          cspell "**/*.txt" \
             --config .github/cspell/cspell.json \
             --no-progress \
             --no-summary \
             --relative \
             > spellcheck.txt || true
 
-          # Detect actual spelling issues
           if grep -q "Unknown word" spellcheck.txt; then
             echo "found=true" >> $GITHUB_OUTPUT
 
-            # Extract unique words
             sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
               | tr '[:upper:]' '[:lower:]' \
               | sort -u > unique.txt
@@ -50,10 +47,8 @@ jobs:
             echo "==============================" >> spellcheck.txt
             echo "Unique flagged words:" >> spellcheck.txt
             echo "==============================" >> spellcheck.txt
-
             cat unique.txt >> spellcheck.txt
             echo "==============================" >> spellcheck.txt
-
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
