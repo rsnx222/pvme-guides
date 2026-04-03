@@ -29,33 +29,30 @@ jobs:
       - name: Run spellcheck (capture output + summary)
         id: spell
         run: |
-          cspell . \
+          # Run cspell (config controls scope)
+          cspell \
             --config .github/cspell/cspell.json \
             --no-progress \
             --no-summary \
             --relative \
-            | tee spellcheck.txt || true
+            > spellcheck.txt || true
 
-          # Extract ONLY the flagged word (ignore fix suggestions)
-          sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
-            | tr '[:upper:]' '[:lower:]' \
-            | sort -u > unique.txt || true
-
-          if grep -q . spellcheck.txt; then
+          # Detect actual spelling issues
+          if grep -q "Unknown word" spellcheck.txt; then
             echo "found=true" >> $GITHUB_OUTPUT
 
-            echo ""
-            echo "=============================="
-            echo "Unique flagged words:"
-            echo "=============================="
+            # Extract unique words
+            sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
+              | tr '[:upper:]' '[:lower:]' \
+              | sort -u > unique.txt
 
-            if [ -s unique.txt ]; then
-              cat unique.txt | tee -a spellcheck.txt
-            else
-              echo "(none found)" | tee -a spellcheck.txt
-            fi
+            echo "" >> spellcheck.txt
+            echo "==============================" >> spellcheck.txt
+            echo "Unique flagged words:" >> spellcheck.txt
+            echo "==============================" >> spellcheck.txt
 
-            echo "=============================="
+            cat unique.txt >> spellcheck.txt
+            echo "==============================" >> spellcheck.txt
 
           else
             echo "found=false" >> $GITHUB_OUTPUT
