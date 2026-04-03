@@ -29,28 +29,35 @@ jobs:
       - name: Run spellcheck (capture output + summary)
         id: spell
         run: |
+          REPORT=/tmp/spellcheck.txt
+          UNIQUE=/tmp/unique.txt
+
           cspell . \
             --config .github/cspell/cspell.json \
             --no-progress \
             --no-summary \
             --relative \
-            | tee spellcheck.txt || true
+            | tee "$REPORT" || true
 
-          if grep -q "Unknown word" spellcheck.txt; then
-            echo "found=true" >> $GITHUB_OUTPUT
+          if grep -q "Unknown word" "$REPORT"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
 
-            sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' spellcheck.txt \
+            sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' "$REPORT" \
               | tr '[:upper:]' '[:lower:]' \
-              | sort -u > unique.txt
+              | sort -u > "$UNIQUE"
 
-            echo "" | tee -a spellcheck.txt
-            echo "==============================" | tee -a spellcheck.txt
-            echo "Unique flagged words:" | tee -a spellcheck.txt
-            echo "==============================" | tee -a spellcheck.txt
-            cat unique.txt | tee -a spellcheck.txt
-            echo "==============================" | tee -a spellcheck.txt
+            {
+              echo ""
+              echo "=============================="
+              echo "Unique flagged words:"
+              echo "=============================="
+              cat "$UNIQUE"
+              echo "=============================="
+            } | tee -a "$REPORT"
+
+            cp "$REPORT" spellcheck.txt
           else
-            echo "found=false" >> $GITHUB_OUTPUT
+            echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Comment on PR
