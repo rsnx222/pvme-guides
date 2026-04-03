@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -26,19 +28,50 @@ jobs:
             @cspell/dict-software-terms \
             @cspell/dict-gaming-terms
 
+      - name: Build changed file list
+        id: changed
+        shell: bash
+        run: |
+          CHANGED=/tmp/changed-files.txt
+          TXT=/tmp/changed-txt-files.txt
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only --diff-filter=ACMRT \
+              "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+              > "$CHANGED"
+          else
+            BEFORE="${{ github.event.before }}"
+            AFTER="${{ github.sha }}"
+
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              git diff-tree --no-commit-id --name-only -r --diff-filter=ACMRT "$AFTER" > "$CHANGED"
+            else
+              git diff --name-only --diff-filter=ACMRT "$BEFORE" "$AFTER" > "$CHANGED"
+            fi
+          fi
+
+          grep -E '\.txt$' "$CHANGED" > "$TXT" || true
+
+          if [ -s "$TXT" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run spellcheck
         id: spell
+        if: steps.changed.outputs.found == 'true'
+        shell: bash
         run: |
           REPORT=/tmp/spellcheck.txt
 
-          git ls-files '*.txt' \
-            | cspell \
-                --config .github/cspell/cspell.json \
-                --file-list stdin \
-                --no-progress \
-                --no-summary \
-                --relative \
-                | tee "$REPORT" || true
+          cspell \
+            --config .github/cspell/cspell.json \
+            --file-list /tmp/changed-txt-files.txt \
+            --no-progress \
+            --no-summary \
+            --relative \
+            | tee "$REPORT" || true
 
           if grep -q "Unknown word" "$REPORT"; then
             echo "found=true" >> "$GITHUB_OUTPUT"
