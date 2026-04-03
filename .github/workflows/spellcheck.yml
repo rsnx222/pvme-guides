@@ -79,12 +79,50 @@ jobs:
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Build PR comment
+        if: github.event_name == 'pull_request' && steps.spell.outputs.found == 'true'
+        shell: bash
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          {
+            echo "## Spelling issues found"
+            echo
+            echo "Possible spelling issues were found in the changed files in this PR."
+            echo
+            echo "- Fix typos directly in the file."
+            echo "- If a flagged word is valid for this project, add it to \`.github/cspell/allow.txt\`."
+            echo
+          } > spellcheck-comment.txt
+
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^([^:]+):([0-9]+):([0-9]+)\ -\ Unknown\ word\ \(([^)]*)\).*$ ]]; then
+              file="${BASH_REMATCH[1]}"
+              lineno="${BASH_REMATCH[2]}"
+              word="${BASH_REMATCH[4]}"
+              url="https://github.com/${HEAD_REPO}/blob/${HEAD_REF}/${file}#L${lineno}"
+              echo "- [\`${file}:${lineno}\`](${url}) — Unknown word \`${word}\`" >> spellcheck-comment.txt
+            fi
+          done < spellcheck.txt
+
+          {
+            echo
+            echo "<details>"
+            echo "<summary>Raw spellcheck output</summary>"
+            echo
+            echo '```'
+            cat spellcheck.txt
+            echo '```'
+            echo "</details>"
+          } >> spellcheck-comment.txt
+
       - name: Comment on PR
         if: github.event_name == 'pull_request' && steps.spell.outputs.found == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: spellcheck.txt
+          body-path: spellcheck-comment.txt
           edit-mode: replace
 
       - name: Fail if issues found
