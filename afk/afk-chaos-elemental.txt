@@ -1,6 +1,6 @@
 # AFK Chaos Elemental
 .img:https://img.pvme.io/images/wdEqnvjshG.png
-blibblesius
+blibblesiu
 .
 ## __Disclaimer__
 .tag:disclaimer
