@@ -26,35 +26,22 @@ jobs:
             @cspell/dict-software-terms \
             @cspell/dict-gaming-terms
 
-      - name: Run spellcheck (capture output + summary)
+      - name: Run spellcheck
         id: spell
         run: |
           REPORT=/tmp/spellcheck.txt
-          UNIQUE=/tmp/unique.txt
 
-          cspell . \
-            --config .github/cspell/cspell.json \
-            --no-progress \
-            --no-summary \
-            --relative \
-            | tee "$REPORT" || true
+          git ls-files '*.txt' \
+            | cspell \
+                --config .github/cspell/cspell.json \
+                --file-list stdin \
+                --no-progress \
+                --no-summary \
+                --relative \
+                | tee "$REPORT" || true
 
           if grep -q "Unknown word" "$REPORT"; then
             echo "found=true" >> "$GITHUB_OUTPUT"
-
-            sed -n 's/.*Unknown word (\([^)]*\)).*/\1/p' "$REPORT" \
-              | tr '[:upper:]' '[:lower:]' \
-              | sort -u > "$UNIQUE"
-
-            {
-              echo ""
-              echo "=============================="
-              echo "Unique flagged words:"
-              echo "=============================="
-              cat "$UNIQUE"
-              echo "=============================="
-            } | tee -a "$REPORT"
-
             cp "$REPORT" spellcheck.txt
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
