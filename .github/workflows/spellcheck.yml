@@ -29,7 +29,7 @@ jobs:
       - name: Run spellcheck (capture output + summary)
         id: spell
         run: |
-          cspell "**/*.txt" \
+          cspell . \
             --config .github/cspell/cspell.json \
             --no-progress \
             --no-summary \

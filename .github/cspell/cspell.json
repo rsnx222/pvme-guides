@@ -15,7 +15,9 @@
     "!.git/**",
 
     "!**/mental-health.txt",
-    "!**/contributors.txt"
+    "!**/contributors.txt",
+
+    "!spellcheck.txt"
   ],
 
   "import": [
