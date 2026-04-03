@@ -16,6 +16,8 @@
 
   "dictionaries": ["pvme-words", "en-gb"],
 
+  "files": ["**/*.txt"],
+
   "flagWords": ["./reject.txt"],
 
   "ignorePaths": [
