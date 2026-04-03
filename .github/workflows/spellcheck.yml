@@ -89,31 +89,31 @@ jobs:
           {
             echo "## Spelling issues found"
             echo
-            echo "Some words in this Pull Request were not recognised by the spellchecker."
-            echo
-            echo "To update this Pull Request, make another commit to the same branch and push it."
-            echo
-            echo "Do one of the following:"
-            echo "- If the word is valid for this project, add it to \`.github/cspell/allow.txt\`"
-            echo "- If it is a typo, correct it in the file"
+            echo "Some words were not recognised by the spellchecker:"
             echo
           } > spellcheck-comment.txt
-
+      
           while IFS= read -r line; do
             file=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\1/p')
             lineno=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\2/p')
             word=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\4/p')
-
+      
             if [ -n "$file" ] && [ -n "$lineno" ] && [ -n "$word" ]; then
               url="https://github.com/${HEAD_REPO}/blob/${HEAD_REF}/${file}#L${lineno}"
               echo "- [\`${file}:${lineno}\`](${url}) — Unknown word \`${word}\`" >> spellcheck-comment.txt
             fi
           done < spellcheck.txt
-
+      
           {
             echo
+            echo "Do one of the following by making another commit to the same branch as this Pull Request:"
+            echo "- If it is a typo, simply correct it in the file"
+            echo "- If the word is valid for this project, add it to \`.github/cspell/allow.txt\`"
+            echo
+            echo "<hr>"
+            echo
             echo "<details>"
-            echo "<summary>Raw spellcheck output</summary>"
+            echo "<summary><small>Raw spellcheck output:</small></summary>"
             echo
             echo '```'
             cat spellcheck.txt
