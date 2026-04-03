@@ -34,7 +34,7 @@ jobs:
             --no-progress \
             --no-summary \
             --relative \
-            > spellcheck.txt || true
+            | tee spellcheck.txt || true
 
           if grep -q "Unknown word" spellcheck.txt; then
             echo "found=true" >> $GITHUB_OUTPUT
@@ -43,12 +43,12 @@ jobs:
               | tr '[:upper:]' '[:lower:]' \
               | sort -u > unique.txt
 
-            echo "" >> spellcheck.txt
-            echo "==============================" >> spellcheck.txt
-            echo "Unique flagged words:" >> spellcheck.txt
-            echo "==============================" >> spellcheck.txt
-            cat unique.txt >> spellcheck.txt
-            echo "==============================" >> spellcheck.txt
+            echo "" | tee -a spellcheck.txt
+            echo "==============================" | tee -a spellcheck.txt
+            echo "Unique flagged words:" | tee -a spellcheck.txt
+            echo "==============================" | tee -a spellcheck.txt
+            cat unique.txt | tee -a spellcheck.txt
+            echo "==============================" | tee -a spellcheck.txt
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
