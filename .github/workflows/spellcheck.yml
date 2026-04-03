@@ -89,10 +89,13 @@ jobs:
           {
             echo "## Spelling issues found"
             echo
-            echo "Possible spelling issues were found in the changed files in this PR."
+            echo "Some words in this Pull Request were not recognised by the spellchecker."
             echo
-            echo "- Fix typos directly in the file."
-            echo "- If a flagged word is valid for this project, add it to \`.github/cspell/allow.txt\`."
+            echo "To update this Pull Request, make another commit to the same branch and push it."
+            echo
+            echo "Do one of the following:"
+            echo "- If the word is valid for this project, add it to \`.github/cspell/allow.txt\`"
+            echo "- If it is a typo, correct it in the file"
             echo
           } > spellcheck-comment.txt
 
