@@ -2,6 +2,20 @@
   "version": "0.2",
   "language": "en-GB",
 
+  "files": [
+    "**/*.txt",
+
+    "!archive/**",
+    "!ca-bingo-lists/**",
+    "!.github/**",
+    "!.vscode/**",
+    "!node_modules/**",
+    "!.git/**",
+
+    "!**/mental-health.txt",
+    "!**/contributors.txt"
+  ],
+
   "import": [
     "@cspell/dict-software-terms/cspell-ext.json",
     "@cspell/dict-gaming-terms/cspell-ext.json"
@@ -16,33 +30,7 @@
 
   "dictionaries": ["pvme-words", "en-gb"],
 
-  "files": ["**/*.txt"],
-
   "flagWords": ["./reject.txt"],
-
-  "ignorePaths": [
-    "node_modules/**",
-    ".git/**",
-
-    ".github/**",
-    ".vscode/**",
-    "archive/**",
-    "ca-bingo-lists/**",
-
-    "**/*.png",
-    "**/*.jpg",
-    "**/*.jpeg",
-    "**/*.gif",
-    "**/*.webp",
-    "**/*.pdf",
-    "**/*.zip",
-    "**/*.mp3",
-    "**/*.mp4",
-
-    "**/mental-health.txt",
-    "**/contributors.txt",
-    "archive/**"
-  ],
 
   "ignoreRegExpList": [
     "<:.*?:.*?>",
