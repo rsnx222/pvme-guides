@@ -14,7 +14,8 @@
     "node_modules/**",
     ".git/**",
     "**/mental-health.txt",
-    "**/contributors.txt"
+    "**/contributors.txt",
+    "**/LICENSE"
   ],
 
   "import": [
