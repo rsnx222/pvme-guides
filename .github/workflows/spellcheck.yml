@@ -97,10 +97,11 @@ jobs:
           } > spellcheck-comment.txt
 
           while IFS= read -r line; do
-            if [[ "$line" =~ ^([^:]+):([0-9]+):([0-9]+)\ -\ Unknown\ word\ \(([^)]*)\).*$ ]]; then
-              file="${BASH_REMATCH[1]}"
-              lineno="${BASH_REMATCH[2]}"
-              word="${BASH_REMATCH[4]}"
+            file=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\1/p')
+            lineno=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\2/p')
+            word=$(printf '%s\n' "$line" | sed -n 's/^\([^:]*\):\([0-9][0-9]*\):\([0-9][0-9]*\) - Unknown word (\([^)]*\)).*$/\4/p')
+
+            if [ -n "$file" ] && [ -n "$lineno" ] && [ -n "$word" ]; then
               url="https://github.com/${HEAD_REPO}/blob/${HEAD_REF}/${file}#L${lineno}"
               echo "- [\`${file}:${lineno}\`](${url}) — Unknown word \`${word}\`" >> spellcheck-comment.txt
             fi
